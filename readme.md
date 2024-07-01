@@ -1,18 +1,25 @@
-# Project Setup and Commands
+# My Pregnancy App
 
-# Step 1: Install Dependencies
+## Project Setup and Commands
 
+### Step 1: Clone the Repository
+
+First, clone the repository:
+
+```bash
+git clone https://github.com/29ayx/csit321-mypregnancy-app.git
+cd csit321-mypregnancy-app
+```
+### Step 2: Install Dependencies
 Ensure you have Go installed. Then, install the necessary Go packages for Fiber and Swagger:
 
 ```bash
-bashCopy code
 go get github.com/gofiber/fiber/v2
 go get go.mongodb.org/mongo-driver/mongo
 go get github.com/gofiber/fiber/v2/middleware/logger
 go get -u github.com/swaggo/swag/cmd/swag
 go get -u github.com/swaggo/fiber-swagger
 
-```
 
 ## Step 2: Project Structure
 
