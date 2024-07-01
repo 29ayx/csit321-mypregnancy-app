@@ -26,7 +26,7 @@ go get -u github.com/swaggo/fiber-swagger
 Ensure your project structure looks like this:
 
 ```go
-goCopy code
+
 gofiber-mongodb/
 ├── cmd/
 │   └── main.go
@@ -53,7 +53,7 @@ gofiber-mongodb/
 To run the server, execute the following command:
 
 ```bash
-bashCopy code
+
 go run cmd/main.go
 
 ```
@@ -63,7 +63,7 @@ go run cmd/main.go
 To generate or update the Swagger documentation, run:
 
 ```bash
-bashCopy code
+
 swag init -g cmd/main.go -o docs
 
 ```
