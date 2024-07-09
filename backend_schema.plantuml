@@ -1,0 +1,282 @@
+@startuml CSIT321_Schema
+/'Forum and Discussion Creation'/
+    class ForumBoard {
+        +boardID: integer \t\t\t|\t NOT NULL
+        +topic: varchar[50] \t\t\t|\t NOT NULL
+        +description: varchar[255] \t|\t NOT NULL
+
+        +getBoardID()\t\t\t|\treturn: integer
+        +getTopic() \t\t\t|\treturn: varchar[50]
+        +getDescription() \t\t|\treturn: varchar[255]
+        *updateTopic()
+        *updateDescription()
+    }
+
+    ForumBoard "1" -- "1..*" Post : Will Have >
+    User "1" -- "0..*" Post : Can Create >
+
+    class Post{
+        +postID: integer \t\t\t|\t NOT NULL
+        +boardID: integer \t\t\t|\t NOT NULL
+        +userID: integer \t\t\t|\t NULL
+        +profID: integer \t\t\t\t|\t NULL
+        +content: varchar[255] \t\t|\t NOT NULL
+        +creationDateTime: datetime \t|\t NOT NULL
+        +editDateTime: datetime \t\t|\t NULL
+        +numOfReplies: integer \t\t|\t NULL
+
+        +getPostID()\t\t\t|\treturn: integer
+        +getContent() \t\t\t|\treturn: varchar[255]
+        +getCreationDateTime()\t|\treturn: datetime
+        +getEditDateTime()\t\t|\treturn: datetime
+        +getNumOfReplies()\t\t|\treturn: integer
+        *updateContent()
+        *updateEditDateTime()
+    }
+
+    Post "1" -- "0..*" Comment : Can Have >
+
+    class Comment{
+        +commentID: integer \t\t\t|\t NOT NULL
+        +postID: integer \t\t\t|\t NOT NULL
+        +userID: integer \t\t\t|\t NULL
+        +profID: integer \t\t\t\t|\t NULL
+        +content: varchar[255] \t\t|\t NOT NULL
+        +creationDateTime: datetime \t|\t NOT NULL
+
+        +getCommentID()\t\t|\treturn: integer
+        +getContent() \t\t\t|\treturn: varchar[255]
+        +getCreationDateTime()\t|\treturn: datetime
+    }
+
+/'journal'/
+
+    User "1" -- "0..*" HealthJournal : Can Create >
+
+    class HealthJournal{
+        +journalID: integer \t\t\t|\t NOT NULL
+        +userID: integer \t\t\t|\t NOT NULL
+        +entryDate: datetime \t\t|\t NOT NULL
+        +feeling: varchar[255] \t\t|\t NULL
+        +gratitudes: varchar[255] \t\t|\t NULL
+        +selfCare: varchar[255] \t\t|\t NULL
+        +thoughts: varchar[255] \t\t|\t NULL
+        +dailyRating: integer \t\t\t|\t NULL
+
+        +getJournalID()\t\t|\treturn: integer
+        +getEntryDate()\t\t|\treturn: datetime
+        +getFeelings()\t\t|\treturn: varchar[255]
+        +getGratitudes()\t|\treturn: varchar[255]
+        +getSelfCare()\t\t|\treturn: varchar[255]
+        +getThoughts()\t\t|\treturn: varchar[255]
+        +getDailyRating()\t|\treturn: integer
+        *updateEntryDate()
+        *updateFeelings()
+        *updateGratitudes()
+        *updateSelfCare()
+        *updateThoughts()
+        *updateDailyRating()
+    }
+
+    User "1" -- "0..*" Checklist : Can Create >
+
+    class Checklist{
+        +checklistID: integer \t\t\t|\t NOT NULL
+        +userID: integer \t\t\t|\t NOT NULL
+        +listTitle: varchar[255] \t\t|\t NOT NULL
+        +listDescription: varchar[255] \t|\t NULL
+        
+        +getChecklistID()\t|\treturn: integer
+        +getListTitle()\t\t|\treturn: varchar[255]
+        +getListDescription()\t|\treturn: varchar[255]
+        *updateListTitle()
+        *updateListDescription()
+    }
+
+    Checklist "1" -- "0..*" ChecklistItems : Can Have >
+
+    class ChecklistItems{
+        +itemID: integer \t\t\t|\t NOT NULL
+        +checklistID: integer \t\t\t|\t NOT NULL
+        +item: varchar[255] \t\t|\t NOT NULL
+        
+        +getItemID()\t|\treturn: integer
+        +getItem()\t\t|\treturn: varchar[255]
+        *updateItem()
+    }
+
+/'User Creation'/
+    class User {
+        +userID: integer\t\t\t\t|\t NOT NULL
+        +firstName: varchar[50]\t\t|\t NOT NULL
+        +lastName: varchar[50]\t\t|\t NOT NULL
+        +emailAddress: varchar[255]\t|\t NOT NULL
+        +phoneNum: varchar[50]\t\t|\t NOT NULL
+        +userBio: varchar[255]\t\t|\t NULL
+        +isExpectingMother: boolean\t|\t NOT NULL
+        +isProfessional: boolean\t\t|\t NOT NULL
+
+        +getUserID()\t\t|\treturn: integer
+        +getPhoneNum()\t|\treturn: varchar[255]
+        +getUserBio()\t\t|\treturn: varchar[255]    
+        +getEmail()\t\t|\treturn: varchar[255]
+        +getName()\t\t|\treturn: varchar[255]
+        *updateFirstName()
+        *updateLastName()
+        *updateEmail()
+        *updatePhoneNum()
+        *updateUserBio()
+    }
+
+    User "1" -- "1" UserPassword : Has >
+
+    class UserPassword{
+        +userID: integer\t\t\t|\t NOT NULL
+        +passHash: varchar[255]\t|\t NOT NULL
+
+        +getPassword()\t\t|\treturn: varchar[255]
+        *updatePassword()
+    }
+
+    User "1" -- "1" UserAddress : Lives At >
+
+    class UserAddress{
+        +userID: integer\t\t\t\t|\t NOT NULL
+        +unitNumber: varchar[50]\t\t|\t NULL
+        +streetNumber: varchar[50]\t|\t NOT NULL
+        +streetName: varchar[255]\t|\t NOT NULL
+        +suburb: varchar[255]\t\t|\t NOT NUL
+        +state: varchar[255]\t\t\t|\t NOT NUL
+
+        +getUnitNumber()\t\t|\treturn: varchar[50]
+        +getStreetNumber()\t\t|\treturn: varchar[50]
+        +getStreetName()\t\t|\treturn: varchar[255]
+        +getSuburb()\t\t\t|\treturn: varchar[255]
+        +getState()\t\t\t\t|\treturn: varchar[255]
+        *updateUnitNumber()
+        *updateStreetNumber()
+        *updateStreetName()
+        *updateSuburb()
+        *updateState()
+    }
+
+    ExpectingMother "0..1" -- "1" User : Can Be >
+
+    class ExpectingMother {
+        +userID: integer\t|\t NOT NULL
+    }
+
+    ExpectingMother "1" -- "1" HealthRecord : Has >
+
+    class HealthRecord{
+        +userID: integer\t\t\t\t\t|\t NOT NULL
+        +age: integer\t\t\t\t\t|\t NOT NULL
+        +height: integer\t\t\t\t\t|\t NULL
+        +weight: integer\t\t\t\t\t|\t NULL
+        +pregnancyPhase: varchar[255]\t|\t NOT NULL
+        +weeksAlong: integer\t\t\t\t|\t NULL
+
+        +getAge()\t\t\t\t|\treturn: integer
+        +getHeight()\t\t\t|\treturn: integer    
+        +getWeight()\t\t\t|\treturn: integer
+        +getPregnancyPhase()\t|\treturn: varchar[255]
+        +getWeeksAlong()\t\t|\treturn: integer
+        *updateAge()
+        *updateHeight()
+        *updateWeight()
+        *updatePregnancyPhase()
+        *updateWeeksAlong()
+    }
+
+    class HealthCareProfessional {
+        +profID: integer\t\t\t|\t NOT NULL
+        +ABN: varchar[50]\t\t|\t NOT NULL
+        +workPhoneNum: integer\t|\t NULL
+        +isConsultant: boolean\t|\t NOT NULL
+
+        +getProfID()\t\t|\treturn: integer
+        +getABN()\t\t\t|\treturn: varchar[50]
+    }
+
+    HealthCareProfessional "1" -- "1" ProfessionalAddress : Lives At >
+
+    class ProfessionalAddress{
+        +profID: integer\t\t\t\t|\t NOT NULL
+        +unitNumber: varchar[50]\t\t|\t NULL
+        +streetNumber: varchar[50]\t|\t NOT NULL
+        +streetName: varchar[255]\t|\t NOT NULL
+        +suburb: varchar[255]\t\t|\t NOT NUL
+        +state: varchar[255]\t\t\t|\t NOT NUL
+
+        +getUnitNumber()\t\t|\treturn: varchar[50]
+        +getStreetNumber()\t\t|\treturn: varchar[50]
+        +getStreetName()\t\t|\treturn: varchar[255]
+        +getSuburb()\t\t\t|\treturn: varchar[255]
+        +getState()\t\t\t\t|\treturn: varchar[255]
+        *updateUnitNumber()
+        *updateStreetNumber()
+        *updateStreetName()
+        *updateSuburb()
+        *updateState()
+    }
+
+    HealthCareProfessional "1" -- "1" ProfessionalPassword : Has >
+
+    class ProfessionalPassword{
+        +profID: integer\t\t\t|\t NOT NULL
+        +passHash: varchar[255]\t|\t NOT NULL
+
+        +getPassword()\t\t|\treturn: varchar[255]
+        *updatePassword()
+    }
+
+    Consultant "0..1" -- "1" HealthCareProfessional : Can Be <
+
+    class Consultant {
+        +profID: integer\t|\t NOT NULL
+    }
+
+    ProfessionalSkills "1..*" -- "1" HealthCareProfessional : Can Have <
+
+    class ProfessionalSkills {
+        +profID: integer\t\t|\t NOT NULL
+        +skill: varchar[50]\t|\t NOT NULL
+
+        +getSkill() \t\t|\treturn: varchar[50]
+        *updateSkill()
+    }
+
+    User "1" -- "0..*" ConsultationRequests : Can Request >
+    Consultant "1" -- "0..*" ConsultationRequests : Will Accept >
+
+    class ConsultationRequests{
+        +requestID: integer \t\t\t\t|\t NOT NULL
+        +userID: integer \t\t\t\t|\t NOT NULL
+        +profID: integer\t\t\t\t\t|\t NOT NULL
+        +description: varchar[255] \t\t|\t NULL
+        +communictionType: varchar[50] \t|\t NOT NULL
+        +consultationDateTime: datetime \t|\t NOT NULL
+        +status: varchar[50] \t\t\t\t|\t NOT NULL
+        +preferredGender: varchar[50] \t\t|\t NULL
+
+        +getRequestID()\t\t\t|\treturn: integer
+        +getDescription() \t\t\t|\treturn: varchar[255]
+        +getConsultationDateTime() \t|\treturn: datetime
+        +getCommunictionType() \t\t|\treturn: varchar[50]
+        +getStatus() \t\t\t\t|\treturn: varchar[50]
+        +getPreferredGender() \t\t|\treturn: varchar[50]
+        *updateDescription()
+        *updateConsultationDateTime()
+        *updateCommunictionType()
+    }
+
+    ConsultationRequests "1" -- "0..*" ConsultationNotes : Can Create >
+
+    class ConsultationNotes{
+        +requestID: integer \t\t|\t NOT NULL
+        +notes: varchar[255] \t\t|\t NOT NULL
+
+        +getNotes() \t|\treturn: varchar[255]
+        *updateNotes()
+    }
+@enduml
