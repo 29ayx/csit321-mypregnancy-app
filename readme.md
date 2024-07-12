@@ -67,3 +67,15 @@ To generate or update the Swagger documentation, run:
 swag init -g cmd/main.go -o docs
 
 ```
+
+## Test API:
+```bash
+#Inserting
+curl -X POST -H "Content-Type: application/json" -d "{\"firstname\":\"test\",\"lastname\":\"user\",\"email\":\"test@example.com\"}" http://127.0.0.1:3000/api/users
+
+#Get - Change _id_ to user's ID
+curl -X GET http://127.0.0.1:3000/api/users/_id_
+
+#Updating - Change _id_ to user's ID
+curl -X PUT -H "Content-Type: application/json" -d "{\"firstname\":\"new_test\"}" http://127.0.0.1:3000/api/users/update/_id_
+```
