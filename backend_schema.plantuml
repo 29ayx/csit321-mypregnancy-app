@@ -5,7 +5,6 @@
         +topic: varchar[50] \t\t\t|\t NOT NULL
         +description: varchar[255] \t|\t NOT NULL
 
-        +getBoardID()\t\t\t|\treturn: integer
         +getTopic() \t\t\t|\treturn: varchar[50]
         +getDescription() \t\t|\treturn: varchar[255]
         *updateTopic()
@@ -25,7 +24,6 @@
         +editDateTime: datetime \t\t|\t NULL
         +numOfReplies: integer \t\t|\t NULL
 
-        +getPostID()\t\t\t|\treturn: integer
         +getContent() \t\t\t|\treturn: varchar[255]
         +getCreationDateTime()\t|\treturn: datetime
         +getEditDateTime()\t\t|\treturn: datetime
@@ -44,7 +42,6 @@
         +content: varchar[255] \t\t|\t NOT NULL
         +creationDateTime: datetime \t|\t NOT NULL
 
-        +getCommentID()\t\t|\treturn: integer
         +getContent() \t\t\t|\treturn: varchar[255]
         +getCreationDateTime()\t|\treturn: datetime
     }
@@ -63,7 +60,6 @@
         +thoughts: varchar[255] \t\t|\t NULL
         +dailyRating: integer \t\t\t|\t NULL
 
-        +getJournalID()\t\t|\treturn: integer
         +getEntryDate()\t\t|\treturn: datetime
         +getFeelings()\t\t|\treturn: varchar[255]
         +getGratitudes()\t|\treturn: varchar[255]
@@ -86,7 +82,6 @@
         +listTitle: varchar[255] \t\t|\t NOT NULL
         +listDescription: varchar[255] \t|\t NULL
         
-        +getChecklistID()\t|\treturn: integer
         +getListTitle()\t\t|\treturn: varchar[255]
         +getListDescription()\t|\treturn: varchar[255]
         *updateListTitle()
@@ -100,7 +95,6 @@
         +checklistID: integer \t\t\t|\t NOT NULL
         +item: varchar[255] \t\t|\t NOT NULL
         
-        +getItemID()\t|\treturn: integer
         +getItem()\t\t|\treturn: varchar[255]
         *updateItem()
     }
@@ -114,9 +108,7 @@
         +phoneNum: varchar[50]\t\t|\t NOT NULL
         +userBio: varchar[255]\t\t|\t NULL
         +isExpectingMother: boolean\t|\t NOT NULL
-        +isProfessional: boolean\t\t|\t NOT NULL
 
-        +getUserID()\t\t|\treturn: integer
         +getPhoneNum()\t|\treturn: varchar[255]
         +getUserBio()\t\t|\treturn: varchar[255]    
         +getEmail()\t\t|\treturn: varchar[255]
@@ -126,6 +118,7 @@
         *updateEmail()
         *updatePhoneNum()
         *updateUserBio()
+        *updateStatus()
     }
 
     User "1" -- "1" UserPassword : Has >
@@ -148,11 +141,6 @@
         +suburb: varchar[255]\t\t|\t NOT NUL
         +state: varchar[255]\t\t\t|\t NOT NUL
 
-        +getUnitNumber()\t\t|\treturn: varchar[50]
-        +getStreetNumber()\t\t|\treturn: varchar[50]
-        +getStreetName()\t\t|\treturn: varchar[255]
-        +getSuburb()\t\t\t|\treturn: varchar[255]
-        +getState()\t\t\t\t|\treturn: varchar[255]
         *updateUnitNumber()
         *updateStreetNumber()
         *updateStreetName()
@@ -176,11 +164,6 @@
         +pregnancyPhase: varchar[255]\t|\t NOT NULL
         +weeksAlong: integer\t\t\t\t|\t NULL
 
-        +getAge()\t\t\t\t|\treturn: integer
-        +getHeight()\t\t\t|\treturn: integer    
-        +getWeight()\t\t\t|\treturn: integer
-        +getPregnancyPhase()\t|\treturn: varchar[255]
-        +getWeeksAlong()\t\t|\treturn: integer
         *updateAge()
         *updateHeight()
         *updateWeight()
@@ -189,13 +172,23 @@
     }
 
     class HealthCareProfessional {
-        +profID: integer\t\t\t|\t NOT NULL
-        +ABN: varchar[50]\t\t|\t NOT NULL
-        +workPhoneNum: integer\t|\t NULL
-        +isConsultant: boolean\t|\t NOT NULL
+        +profID: integer\t\t\t\t|\t NOT NULL
+        +firstName: varchar[50]\t\t|\t NOT NULL
+        +lastName: varchar[50]\t\t|\t NOT NULL
+        +emailAddress: varchar[255]\t|\t NOT NULL
+        +phoneNum: varchar[50]\t\t|\t NOT NULL
+        +workPhoneNum: varchar[50]\t|\t NULL
+        +profBio: varchar[255]\t\t|\t NULL
+        +ABN: varchar[50]\t\t\t|\t NOT NULL
+        +isConsultant: boolean\t\t|\t NOT NULL
 
-        +getProfID()\t\t|\treturn: integer
-        +getABN()\t\t\t|\treturn: varchar[50]
+        *updateFirstName()
+        *updateLastName()
+        *updateEmail()
+        *updatePhoneNum()
+        *updateWorkNum()
+        *updateProfBio()
+        *updateStatus()
     }
 
     HealthCareProfessional "1" -- "1" ProfessionalAddress : Lives At >
@@ -208,11 +201,6 @@
         +suburb: varchar[255]\t\t|\t NOT NUL
         +state: varchar[255]\t\t\t|\t NOT NUL
 
-        +getUnitNumber()\t\t|\treturn: varchar[50]
-        +getStreetNumber()\t\t|\treturn: varchar[50]
-        +getStreetName()\t\t|\treturn: varchar[255]
-        +getSuburb()\t\t\t|\treturn: varchar[255]
-        +getState()\t\t\t\t|\treturn: varchar[255]
         *updateUnitNumber()
         *updateStreetNumber()
         *updateStreetName()
@@ -242,7 +230,6 @@
         +profID: integer\t\t|\t NOT NULL
         +skill: varchar[50]\t|\t NOT NULL
 
-        +getSkill() \t\t|\treturn: varchar[50]
         *updateSkill()
     }
 
@@ -259,12 +246,6 @@
         +status: varchar[50] \t\t\t\t|\t NOT NULL
         +preferredGender: varchar[50] \t\t|\t NULL
 
-        +getRequestID()\t\t\t|\treturn: integer
-        +getDescription() \t\t\t|\treturn: varchar[255]
-        +getConsultationDateTime() \t|\treturn: datetime
-        +getCommunictionType() \t\t|\treturn: varchar[50]
-        +getStatus() \t\t\t\t|\treturn: varchar[50]
-        +getPreferredGender() \t\t|\treturn: varchar[50]
         *updateDescription()
         *updateConsultationDateTime()
         *updateCommunictionType()
@@ -276,7 +257,6 @@
         +requestID: integer \t\t|\t NOT NULL
         +notes: varchar[255] \t\t|\t NOT NULL
 
-        +getNotes() \t|\treturn: varchar[255]
         *updateNotes()
     }
 @enduml
