@@ -68,7 +68,7 @@ func CreateUser(c *fiber.Ctx) error {
 }
 
 // Global UpdateUserField to be referenced
-func UpdateUserField(c *fiber.Ctx, fieldName string, updateValue interface{}) error {
+func UpdateUser(c *fiber.Ctx) error {
 	collection := database.GetCollection("users")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -79,17 +79,26 @@ func UpdateUserField(c *fiber.Ctx, fieldName string, updateValue interface{}) er
 		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "User ID is required"})
 	}
 
-	// Create the update document
-	update := bson.M{
-		"$set": bson.M{
-			fieldName: updateValue,
-		},
+	// Parse the request body for the fields to be updated
+	var updateData map[string]interface{}
+	if err := c.BodyParser(&updateData); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": err.Error()})
+	}
+
+	// Ensure that the updateData is not empty
+	if len(updateData) == 0 {
+		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "No update data provided"})
 	}
 
 	// Convert the user ID to an ObjectID
 	objID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "Invalid user ID format"})
+	}
+
+	// Create the update document
+	update := bson.M{
+		"$set": updateData,
 	}
 
 	// Perform the update operation
@@ -103,41 +112,8 @@ func UpdateUserField(c *fiber.Ctx, fieldName string, updateValue interface{}) er
 		return c.Status(http.StatusNotFound).JSON(map[string]string{"error": "User not found or no changes made"})
 	}
 
-	return c.Status(http.StatusOK).JSON(result)
+	return c.Status(http.StatusOK).JSON(map[string]interface{}{
+		"message":       "User updated successfully",
+		"modifiedCount": result.ModifiedCount,
+	})
 }
-
-// UpdateFirstName godoc
-func UpdateFirstName(c *fiber.Ctx) error {
-	var data struct {
-		FirstName string `json:"firstname"`
-	}
-	if err := c.BodyParser(&data); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": err.Error()})
-	}
-
-	if data.FirstName == "" {
-		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "First name is required"})
-	}
-
-	return UpdateUserField(c, "firstname", data.FirstName)
-}
-
-func UpdateLastName(c *fiber.Ctx) error {
-	var data struct {
-		LastName string `json:"lastname"`
-	}
-	if err := c.BodyParser(&data); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": err.Error()})
-	}
-
-	if data.LastName == "" {
-		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "Last name is required"})
-	}
-
-	return UpdateUserField(c, "lastname", data.LastName)
-}
-
-// TODO
-func UpdateEmail()    {}
-func UpdatePhoneNum() {}
-func UpdateUserBio()  {}

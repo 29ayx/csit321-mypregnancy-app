@@ -77,5 +77,5 @@ curl -X POST -H "Content-Type: application/json" -d "{\"firstname\":\"test\",\"l
 curl -X GET http://127.0.0.1:3000/api/users/_id_
 
 #Updating - Change _id_ to user's ID
-curl -X PUT -H "Content-Type: application/json" -d "{\"firstname\":\"new_test\"}" http://127.0.0.1:3000/api/users/update/_id_
+curl -X PUT -H "Content-Type: application/json" -d "{\"firstname\":\"new_test\",\"lastname\":\"example_change\" }" http://127.0.0.1:3000/api/users/update/_id_
 ```
