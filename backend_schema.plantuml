@@ -5,10 +5,8 @@
         +topic: varchar[50] \t\t\t|\t NOT NULL
         +description: varchar[255] \t|\t NOT NULL
 
-        +getTopic() \t\t\t|\treturn: varchar[50]
-        +getDescription() \t\t|\treturn: varchar[255]
-        *updateTopic()
-        *updateDescription()
+        +getForum()
+        *updateForum()
     }
 
     ForumBoard "1" -- "1..*" Post : Will Have >
@@ -24,12 +22,8 @@
         +editDateTime: datetime \t\t|\t NULL
         +numOfReplies: integer \t\t|\t NULL
 
-        +getContent() \t\t\t|\treturn: varchar[255]
-        +getCreationDateTime()\t|\treturn: datetime
-        +getEditDateTime()\t\t|\treturn: datetime
-        +getNumOfReplies()\t\t|\treturn: integer
-        *updateContent()
-        *updateEditDateTime()
+        +getPost()
+        *updatePost()
     }
 
     Post "1" -- "0..*" Comment : Can Have >
@@ -42,8 +36,7 @@
         +content: varchar[255] \t\t|\t NOT NULL
         +creationDateTime: datetime \t|\t NOT NULL
 
-        +getContent() \t\t\t|\treturn: varchar[255]
-        +getCreationDateTime()\t|\treturn: datetime
+        +getComment() \t\t\t|\treturn: varchar[255]
     }
 
 /'journal'/
@@ -60,18 +53,8 @@
         +thoughts: varchar[255] \t\t|\t NULL
         +dailyRating: integer \t\t\t|\t NULL
 
-        +getEntryDate()\t\t|\treturn: datetime
-        +getFeelings()\t\t|\treturn: varchar[255]
-        +getGratitudes()\t|\treturn: varchar[255]
-        +getSelfCare()\t\t|\treturn: varchar[255]
-        +getThoughts()\t\t|\treturn: varchar[255]
-        +getDailyRating()\t|\treturn: integer
-        *updateEntryDate()
-        *updateFeelings()
-        *updateGratitudes()
-        *updateSelfCare()
-        *updateThoughts()
-        *updateDailyRating()
+        +getHealthJournal()
+        *updateHealthJournal()
     }
 
     User "1" -- "0..*" Checklist : Can Create >
@@ -82,10 +65,8 @@
         +listTitle: varchar[255] \t\t|\t NOT NULL
         +listDescription: varchar[255] \t|\t NULL
         
-        +getListTitle()\t\t|\treturn: varchar[255]
-        +getListDescription()\t|\treturn: varchar[255]
-        *updateListTitle()
-        *updateListDescription()
+        +getChecklist()
+        *updateChecklist()
     }
 
     Checklist "1" -- "0..*" ChecklistItems : Can Have >
@@ -95,7 +76,7 @@
         +checklistID: integer \t\t\t|\t NOT NULL
         +item: varchar[255] \t\t|\t NOT NULL
         
-        +getItem()\t\t|\treturn: varchar[255]
+        +getItem()
         *updateItem()
     }
 
@@ -109,16 +90,8 @@
         +userBio: varchar[255]\t\t|\t NULL
         +isExpectingMother: boolean\t|\t NOT NULL
 
-        +getPhoneNum()\t|\treturn: varchar[255]
-        +getUserBio()\t\t|\treturn: varchar[255]    
-        +getEmail()\t\t|\treturn: varchar[255]
-        +getName()\t\t|\treturn: varchar[255]
-        *updateFirstName()
-        *updateLastName()
-        *updateEmail()
-        *updatePhoneNum()
-        *updateUserBio()
-        *updateStatus()
+        +getUser()
+        *updateUser()
     }
 
     User "1" -- "1" UserPassword : Has >
@@ -127,7 +100,7 @@
         +userID: integer\t\t\t|\t NOT NULL
         +passHash: varchar[255]\t|\t NOT NULL
 
-        +getPassword()\t\t|\treturn: varchar[255]
+        +getPassword()
         *updatePassword()
     }
 
@@ -140,12 +113,10 @@
         +streetName: varchar[255]\t|\t NOT NULL
         +suburb: varchar[255]\t\t|\t NOT NUL
         +state: varchar[255]\t\t\t|\t NOT NUL
+        +country: varchar[255]\t|\t NOT NULL
 
-        *updateUnitNumber()
-        *updateStreetNumber()
-        *updateStreetName()
-        *updateSuburb()
-        *updateState()
+        +getAddress()
+        *updateAddress()
     }
 
     ExpectingMother "0..1" -- "1" User : Can Be >
@@ -164,11 +135,8 @@
         +pregnancyPhase: varchar[255]\t|\t NOT NULL
         +weeksAlong: integer\t\t\t\t|\t NULL
 
-        *updateAge()
-        *updateHeight()
-        *updateWeight()
-        *updatePregnancyPhase()
-        *updateWeeksAlong()
+        +getHealthRecord()
+        *updateHealthRecord()
     }
 
     class HealthCareProfessional {
@@ -182,13 +150,8 @@
         +ABN: varchar[50]\t\t\t|\t NOT NULL
         +isConsultant: boolean\t\t|\t NOT NULL
 
-        *updateFirstName()
-        *updateLastName()
-        *updateEmail()
-        *updatePhoneNum()
-        *updateWorkNum()
-        *updateProfBio()
-        *updateStatus()
+        +getProfessional()
+        *updateProfessional()
     }
 
     HealthCareProfessional "1" -- "1" ProfessionalAddress : Lives At >
@@ -201,11 +164,8 @@
         +suburb: varchar[255]\t\t|\t NOT NUL
         +state: varchar[255]\t\t\t|\t NOT NUL
 
-        *updateUnitNumber()
-        *updateStreetNumber()
-        *updateStreetName()
-        *updateSuburb()
-        *updateState()
+        +getAddress()
+        *updateAddress()
     }
 
     HealthCareProfessional "1" -- "1" ProfessionalPassword : Has >
@@ -230,6 +190,7 @@
         +profID: integer\t\t|\t NOT NULL
         +skill: varchar[50]\t|\t NOT NULL
 
+        +getSkill()
         *updateSkill()
     }
 
@@ -246,9 +207,8 @@
         +status: varchar[50] \t\t\t\t|\t NOT NULL
         +preferredGender: varchar[50] \t\t|\t NULL
 
-        *updateDescription()
-        *updateConsultationDateTime()
-        *updateCommunictionType()
+        +getConsultantRequests()
+        *updateConsultantRequests()
     }
 
     ConsultationRequests "1" -- "0..*" ConsultationNotes : Can Create >
@@ -257,6 +217,7 @@
         +requestID: integer \t\t|\t NOT NULL
         +notes: varchar[255] \t\t|\t NOT NULL
 
+        +getNotes()
         *updateNotes()
     }
 @enduml
