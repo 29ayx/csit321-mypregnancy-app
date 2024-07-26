@@ -17,8 +17,9 @@ func SetupRoutes(app *fiber.App) {
 
 	/* Test for User Password - Will need to add proper functionality */
 	/*
-		api.Post("/userpassword/:id", handlers.CreatePass)
-		api.Put("/userpassword/updatePass/:id", handlers.UpdateUserPass)
+		api.Post("/register", handlers.CreateUserPass)
+		api.Post("/login/:id", handlers.GetUserPass)
+		api.Put("/users/updatepassphrase", handlers.UpdateUserPass)
 	*/
 
 	// Forum routes
