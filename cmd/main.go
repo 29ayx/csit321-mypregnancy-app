@@ -1,13 +1,15 @@
 package main
 
 import (
-    "log"
-    "gofiber-mongodb/server/database"
-    "gofiber-mongodb/routes"
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/logger"
-    _ "gofiber-mongodb/docs" // swagger docs
-    "github.com/gofiber/swagger" // swagger middleware
+	_ "gofiber-mongodb/docs" // swagger docs
+	"gofiber-mongodb/routes"
+	"gofiber-mongodb/server/database"
+	"log"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/swagger" // swagger middleware
 )
 
 // @title GoFiber MongoDB API
@@ -25,14 +27,18 @@ import (
 // @host localhost:3000
 // @BasePath /api
 func main() {
-    app := fiber.New()
-    app.Use(logger.New())
+	app := fiber.New()
+	app.Use(logger.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:3001", // Change to your allowed origin
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 
-    database.ConnectDB()
-    routes.SetupRoutes(app)
+	database.ConnectDB()
+	routes.SetupRoutes(app)
 
-    // Swagger route
-    app.Get("/swagger/*", swagger.HandlerDefault)
+	// Swagger route
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
-    log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":3000"))
 }

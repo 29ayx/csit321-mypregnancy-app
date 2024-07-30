@@ -1,7 +1,7 @@
 @startuml CSIT321_Schema
 /'Forum and Discussion Creation'/
     class ForumBoard {
-        +boardID: integer \t\t\t|\t NOT NULL
+        +boardID: varchar[255] \t\t\t|\t NOT NULL
         +topic: varchar[50] \t\t\t|\t NOT NULL
         +description: varchar[255] \t|\t NOT NULL
 
@@ -13,10 +13,10 @@
     User "1" -- "0..*" Post : Can Create >
 
     class Post{
-        +postID: integer \t\t\t|\t NOT NULL
-        +boardID: integer \t\t\t|\t NOT NULL
-        +userID: integer \t\t\t|\t NULL
-        +profID: integer \t\t\t\t|\t NULL
+        +postID: varchar[255] \t\t\t|\t NOT NULL
+        +boardID: varchar[255] \t\t\t|\t NOT NULL
+        +userID: varchar[255] \t\t\t|\t NULL
+        +profID: varchar[255] \t\t\t\t|\t NULL
         +content: varchar[255] \t\t|\t NOT NULL
         +creationDateTime: datetime \t|\t NOT NULL
         +editDateTime: datetime \t\t|\t NULL
@@ -29,10 +29,10 @@
     Post "1" -- "0..*" Comment : Can Have >
 
     class Comment{
-        +commentID: integer \t\t\t|\t NOT NULL
-        +postID: integer \t\t\t|\t NOT NULL
-        +userID: integer \t\t\t|\t NULL
-        +profID: integer \t\t\t\t|\t NULL
+        +commentID: varchar[255] \t\t\t|\t NOT NULL
+        +postID: varchar[255] \t\t\t|\t NOT NULL
+        +userID: varchar[255] \t\t\t|\t NULL
+        +profID: varchar[255] \t\t\t\t|\t NULL
         +content: varchar[255] \t\t|\t NOT NULL
         +creationDateTime: datetime \t|\t NOT NULL
 
@@ -44,8 +44,8 @@
     User "1" -- "0..*" HealthJournal : Can Create >
 
     class HealthJournal{
-        +journalID: integer \t\t\t|\t NOT NULL
-        +userID: integer \t\t\t|\t NOT NULL
+        +journalID: varchar[255] \t\t\t|\t NOT NULL
+        +userID: varchar[255] \t\t\t|\t NOT NULL
         +entryDate: datetime \t\t|\t NOT NULL
         +feeling: varchar[255] \t\t|\t NULL
         +gratitudes: varchar[255] \t\t|\t NULL
@@ -60,8 +60,8 @@
     User "1" -- "0..*" Checklist : Can Create >
 
     class Checklist{
-        +checklistID: integer \t\t\t|\t NOT NULL
-        +userID: integer \t\t\t|\t NOT NULL
+        +checklistID: varchar[255] \t\t\t|\t NOT NULL
+        +userID: varchar[255] \t\t\t|\t NOT NULL
         +listTitle: varchar[255] \t\t|\t NOT NULL
         +listDescription: varchar[255] \t|\t NULL
         
@@ -72,8 +72,8 @@
     Checklist "1" -- "0..*" ChecklistItems : Can Have >
 
     class ChecklistItems{
-        +itemID: integer \t\t\t|\t NOT NULL
-        +checklistID: integer \t\t\t|\t NOT NULL
+        +itemID: varchar[255] \t\t\t|\t NOT NULL
+        +checklistID: varchar[255] \t\t\t|\t NOT NULL
         +item: varchar[255] \t\t|\t NOT NULL
         
         +getItem()
@@ -82,7 +82,7 @@
 
 /'User Creation'/
     class User {
-        +userID: integer\t\t\t\t|\t NOT NULL
+        +userID: varchar[255]\t\t\t\t|\t NOT NULL
         +firstName: varchar[50]\t\t|\t NOT NULL
         +lastName: varchar[50]\t\t|\t NOT NULL
         +emailAddress: varchar[255]\t|\t NOT NULL
@@ -98,7 +98,7 @@
     User "1" -- "1" UserAddress : Lives At >
 
     class UserAddress{
-        +userID: integer\t\t\t\t|\t NOT NULL
+        +userID: varchar[255]\t\t\t\t|\t NOT NULL
         +unitNumber: varchar[50]\t\t|\t NULL
         +streetNumber: varchar[50]\t|\t NOT NULL
         +streetName: varchar[255]\t|\t NOT NULL
@@ -113,13 +113,13 @@
     ExpectingMother "0..1" -- "1" User : Can Be >
 
     class ExpectingMother {
-        +userID: integer\t|\t NOT NULL
+        +userID: varchar[255]\t|\t NOT NULL
     }
 
     ExpectingMother "1" -- "1" HealthRecord : Has >
 
     class HealthRecord{
-        +userID: integer\t\t\t\t\t|\t NOT NULL
+        +userID: varchar[255]\t\t\t\t\t|\t NOT NULL
         +age: integer\t\t\t\t\t|\t NOT NULL
         +height: integer\t\t\t\t\t|\t NULL
         +weight: integer\t\t\t\t\t|\t NULL
@@ -131,7 +131,7 @@
     }
 
     class HealthCareProfessional {
-        +profID: integer\t\t\t\t|\t NOT NULL
+        +profID: varchar[255]\t\t\t\t|\t NOT NULL
         +firstName: varchar[50]\t\t|\t NOT NULL
         +lastName: varchar[50]\t\t|\t NOT NULL
         +emailAddress: varchar[255]\t|\t NOT NULL
@@ -149,7 +149,7 @@
     HealthCareProfessional "1" -- "1" ProfessionalAddress : Lives At >
 
     class ProfessionalAddress{
-        +profID: integer\t\t\t\t|\t NOT NULL
+        +profID: varchar[255]\t\t\t\t|\t NOT NULL
         +unitNumber: varchar[50]\t\t|\t NULL
         +streetNumber: varchar[50]\t|\t NOT NULL
         +streetName: varchar[255]\t|\t NOT NULL
@@ -163,13 +163,13 @@
     Consultant "0..1" -- "1" HealthCareProfessional : Can Be <
 
     class Consultant {
-        +profID: integer\t|\t NOT NULL
+        +profID: varchar[255]\t|\t NOT NULL
     }
 
     ProfessionalSkills "1..*" -- "1" HealthCareProfessional : Can Have <
 
     class ProfessionalSkills {
-        +profID: integer\t\t|\t NOT NULL
+        +profID: varchar[255]\t\t|\t NOT NULL
         +skill: varchar[50]\t|\t NOT NULL
 
         +getSkill()
@@ -180,9 +180,9 @@
     Consultant "1" -- "0..*" ConsultationRequests : Will Accept >
 
     class ConsultationRequests{
-        +requestID: integer \t\t\t\t|\t NOT NULL
-        +userID: integer \t\t\t\t|\t NOT NULL
-        +profID: integer\t\t\t\t\t|\t NOT NULL
+        +requestID: varchar[255] \t\t\t\t|\t NOT NULL
+        +userID: varchar[255] \t\t\t\t|\t NOT NULL
+        +profID: varchar[255]\t\t\t\t\t|\t NOT NULL
         +description: varchar[255] \t\t|\t NULL
         +communictionType: varchar[50] \t|\t NOT NULL
         +consultationDateTime: datetime \t|\t NOT NULL
@@ -196,7 +196,7 @@
     ConsultationRequests "1" -- "0..*" ConsultationNotes : Can Create >
 
     class ConsultationNotes{
-        +requestID: integer \t\t|\t NOT NULL
+        +requestID: varchar[255] \t\t|\t NOT NULL
         +notes: varchar[255] \t\t|\t NOT NULL
 
         +getNotes()

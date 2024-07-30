@@ -64,11 +64,6 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": err.Error()})
 	}
 
-	// Validate password length
-	if len(user.PassHash) < 8 {
-		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "Password must be at least 8 characters long"})
-	}
-
 	// Hash the password using bcrypt
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PassHash), bcrypt.DefaultCost)
 	if err != nil {
@@ -95,6 +90,7 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	// Generate JWT token for the new user
+
 	token, err := GenerateToken(user.Email)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(map[string]string{"error": "Failed to generate token"})
@@ -160,7 +156,7 @@ func UpdateUser(c *fiber.Ctx) error {
 func LoginUser(c *fiber.Ctx) error {
 	var loginRequest struct {
 		Email    string `json:"email"`
-		PassHash string `json:"passhash"` // Changed from "Password" to "PassHash"
+		PassHash string `json:"passhash"`
 	}
 
 	if err := c.BodyParser(&loginRequest); err != nil {
