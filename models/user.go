@@ -7,6 +7,6 @@ type User struct {
 	Email             string `json:"email" bson:"email"`
 	PhoneNum          int    `json:"phonenum" bson:"phonenum"`
 	UserBio           string `json:"userbio" bson:"userbio"`
+	PassHash          string `json:"passhash" bson:"passhash"`
 	IsExpectingMother bool   `json:"isexpectingmother" bson:"isexpectingmother"`
-	IsProfessional    bool   `json:"isprofessional" bson:"isprofessional"`
 }

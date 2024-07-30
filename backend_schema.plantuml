@@ -88,20 +88,11 @@
         +emailAddress: varchar[255]\t|\t NOT NULL
         +phoneNum: varchar[50]\t\t|\t NOT NULL
         +userBio: varchar[255]\t\t|\t NULL
+        +passHash: varchar[255]\t\t|\t NULL
         +isExpectingMother: boolean\t|\t NOT NULL
 
         +getUser()
         *updateUser()
-    }
-
-    User "1" -- "1" UserPassword : Has >
-
-    class UserPassword{
-        +userID: integer\t\t\t|\t NOT NULL
-        +passHash: varchar[255]\t|\t NOT NULL
-
-        +getPassword()
-        *updatePassword()
     }
 
     User "1" -- "1" UserAddress : Lives At >
@@ -148,6 +139,7 @@
         +workPhoneNum: varchar[50]\t|\t NULL
         +profBio: varchar[255]\t\t|\t NULL
         +ABN: varchar[50]\t\t\t|\t NOT NULL
+        +passHash: varchar[255]\t\t|\t NULL
         +isConsultant: boolean\t\t|\t NOT NULL
 
         +getProfessional()
@@ -166,16 +158,6 @@
 
         +getAddress()
         *updateAddress()
-    }
-
-    HealthCareProfessional "1" -- "1" ProfessionalPassword : Has >
-
-    class ProfessionalPassword{
-        +profID: integer\t\t\t|\t NOT NULL
-        +passHash: varchar[255]\t|\t NOT NULL
-
-        +getPassword()\t\t|\treturn: varchar[255]
-        *updatePassword()
     }
 
     Consultant "0..1" -- "1" HealthCareProfessional : Can Be <
