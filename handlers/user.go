@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"gofiber-mongodb/models"
 	"gofiber-mongodb/server/database"
@@ -98,28 +99,44 @@ func CreateUser(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	var user models.User
-	if err := c.BodyParser(&user); err != nil {
+	var requestData struct {
+		FirstName string `json:"firstname"`
+		LastName  string `json:"lastname"`
+		Email     string `json:"email"`
+		Password  string `json:"password"`
+	}
+	
+	if err := c.BodyParser(&requestData); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": err.Error()})
 	}
 
-	// Hash the password using bcrypt
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PassHash), bcrypt.DefaultCost)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(map[string]string{"error": "Failed to hash password"})
+	// Validate password length
+	if len(requestData.Password) < 8 {
+		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "Invalid password length"})
 	}
 
-	// Store the hashed password instead of the plain password
-	user.PassHash = string(hashedPassword)
-
 	// Check if the email is already taken
-	count, err := collection.CountDocuments(ctx, bson.M{"email": user.Email})
+	count, err := collection.CountDocuments(ctx, bson.M{"email": requestData.Email})
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(map[string]string{"error": "Database error"})
 	}
 
 	if count > 0 {
 		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "Email is already taken"})
+	}
+
+	// Hash the password using bcrypt
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(requestData.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(map[string]string{"error": "Failed to hash password"})
+	}
+
+	// Create the user object with the hashed password
+	user := models.User{
+		FirstName: requestData.FirstName,
+		LastName:  requestData.LastName,
+		Email:     requestData.Email,
+		PassHash:  string(hashedPassword),
 	}
 
 	// Insert the user into the database
@@ -129,7 +146,6 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	// Generate JWT token for the new user
-
 	token, err := GenerateToken(user.Email)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(map[string]string{"error": "Failed to generate token"})
@@ -195,11 +211,17 @@ func UpdateUser(c *fiber.Ctx) error {
 func LoginUser(c *fiber.Ctx) error {
 	var loginRequest struct {
 		Email    string `json:"email"`
-		Pass string `json:"pass"`
+		Password string `json:"password"`
 	}
 
-	if err := c.BodyParser(&loginRequest); err != nil {
+	// Manually parse the JSON body
+	if err := json.Unmarshal(c.Body(), &loginRequest); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": err.Error()})
+	}
+
+	// Validate password length
+	if len(loginRequest.Password) < 8 {
+		return c.Status(http.StatusBadRequest).JSON(map[string]string{"error": "Invalid email or password"})
 	}
 
 	collection := database.GetCollection("users")
@@ -213,11 +235,10 @@ func LoginUser(c *fiber.Ctx) error {
 	}
 
 	// Verify the password using bcrypt
-	if err := bcrypt.CompareHashAndPassword([]byte(user.PassHash), []byte(loginRequest.Pass)); err != nil {
+	err = bcrypt.CompareHashAndPassword([]byte(user.PassHash), []byte(loginRequest.Password))
+	if err != nil {
 		return c.Status(http.StatusUnauthorized).JSON(map[string]string{"error": "Invalid email or password"})
 	}
-
-	
 
 	// Generate JWT token
 	token, err := GenerateToken(user.Email)
