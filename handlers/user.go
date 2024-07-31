@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"gofiber-mongodb/models"
 	"gofiber-mongodb/server/database"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,16 +31,53 @@ import (
 // @Failure 500 {object} map[string]string
 // @Router /users/{id} [get]
 func GetUser(c *fiber.Ctx) error {
+	// Extract the token from the Authorization header
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return c.Status(http.StatusUnauthorized).JSON(map[string]string{"error": "Missing or malformed JWT"})
+	}
+
+	splitToken := strings.Split(authHeader, "Bearer ")
+	if len(splitToken) != 2 {
+		return c.Status(http.StatusUnauthorized).JSON(map[string]string{"error": "Malformed JWT"})
+	}
+	tokenString := splitToken[1]
+
+	// Parse and validate the token
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return []byte(os.Getenv("SECRET")), nil
+	})
+
+	if err != nil {
+		return c.Status(http.StatusUnauthorized).JSON(map[string]string{"error": "Invalid or expired JWT"})
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return c.Status(http.StatusUnauthorized).JSON(map[string]string{"error": "Invalid or expired JWT"})
+	}
+
+	// Check if the "email" claim is present and is a string
+	email, ok := claims["email"].(string)
+	if !ok || email == "" {
+		return c.Status(http.StatusUnauthorized).JSON(map[string]string{"error": "Invalid JWT claims"})
+	}
+
 	collection := database.GetCollection("users")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	id, _ := primitive.ObjectIDFromHex(c.Params("id"))
 	var user models.User
-	err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+	err = collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
 	if err != nil {
 		return c.Status(http.StatusNotFound).JSON(map[string]string{"error": "User not found"})
 	}
+
+	// Strip passhash from response
+	user.PassHash = ""
 
 	return c.Status(http.StatusOK).JSON(user)
 }
@@ -156,7 +195,7 @@ func UpdateUser(c *fiber.Ctx) error {
 func LoginUser(c *fiber.Ctx) error {
 	var loginRequest struct {
 		Email    string `json:"email"`
-		PassHash string `json:"passhash"`
+		Pass string `json:"pass"`
 	}
 
 	if err := c.BodyParser(&loginRequest); err != nil {
@@ -174,11 +213,22 @@ func LoginUser(c *fiber.Ctx) error {
 	}
 
 	// Verify the password using bcrypt
-	if err := bcrypt.CompareHashAndPassword([]byte(user.PassHash), []byte(loginRequest.PassHash)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PassHash), []byte(loginRequest.Pass)); err != nil {
 		return c.Status(http.StatusUnauthorized).JSON(map[string]string{"error": "Invalid email or password"})
 	}
 
-	return c.Status(http.StatusOK).JSON(map[string]string{"message": "Login successful"})
+	
+
+	// Generate JWT token
+	token, err := GenerateToken(user.Email)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(map[string]string{"error": "Failed to generate token"})
+	}
+
+	return c.Status(http.StatusOK).JSON(map[string]string{
+		"message": "Login successful",
+		"token":   token,
+	})
 }
 
 // GenerateToken generates a JWT token for the given user ID and email

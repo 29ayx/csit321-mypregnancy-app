@@ -13,7 +13,7 @@ func SetupRoutes(app *fiber.App) {
 	// User routes
 	api.Post("/signup", handlers.CreateUser)
 	api.Post("/login", handlers.LoginUser)
-	api.Get("/users/:id", handlers.GetUser)
+	api.Get("/user", handlers.GetUser)
 	api.Put("/users/update/:id", handlers.UpdateUser)
 
 	// Forum routes
