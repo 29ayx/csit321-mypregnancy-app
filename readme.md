@@ -53,9 +53,7 @@ gofiber-mongodb/
 To run the server, execute the following command:
 
 ```bash
-
 go run cmd/main.go
-
 ```
 
 ## Step 4: Generating and Updating Swagger Documentation
@@ -66,4 +64,19 @@ To generate or update the Swagger documentation, run:
 
 swag init -g cmd/main.go -o docs
 
+```
+
+## Test API:
+```bash
+#Inserting
+curl -X POST -H "Content-Type: application/json" -d "{\"firstname\":\"test\",\"lastname\":\"user\",\"email\":\"test@example.com\",\"passhash\":\"testpassword\"}" http://127.0.0.1:3000/api/signup
+
+#Get - Change _id_ to user's ID
+curl -X GET http://127.0.0.1:3000/api/users/_id_
+
+#Updating - Change _id_ to user's ID
+curl -X PUT -H "Content-Type: application/json" -d "{\"firstname\":\"new_test\",\"lastname\":\"example_change\" }" http://127.0.0.1:3000/api/users/update/_id_
+
+# Login -  
+curl -X POST -H "Content-Type: application/json" -d "{\"email\":\"test@example.com\",\"passhash\":\"testpassword\"}" http://127.0.0.1:3000/api/login
 ```
